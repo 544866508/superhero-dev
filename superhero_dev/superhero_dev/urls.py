@@ -18,9 +18,11 @@ from django.urls import path, include, re_path
 from django.views.static import serve
 
 from rest_framework.documentation import include_docs_urls
+import jwt
 
 from apps.swiper.views import GetSwiperView
 from apps.film.views import GetFilmView, GetGuessFilmView, GetSearchFilmView, GetFilmDetailView
+from apps.user.views import RegisterView, LoginView, LoginOutView, GetUserInfoView, UserInfoView
 from superhero_dev.settings import MEDIA_ROOT
 
 urlpatterns = [
@@ -44,4 +46,19 @@ urlpatterns = [
 
     # 获取电影详情信息
     path('api/v1/get/filmdetail/', GetFilmDetailView.as_view()),
+
+    # 用户注册
+    path('register/', RegisterView.as_view()),
+
+    # 用户登录（验证重复登录，生成JWT）
+    path('login/', LoginView.as_view()),
+
+    # 用户退出登录（验证JWT，删除JWT）
+    path('login_out/', LoginOutView.as_view()),
+
+    # 获取用户信息（验证JWT）
+    path('api/v1/get/user_info/', GetUserInfoView.as_view()),
+
+    # 局部更新信息（验证JWT）
+    path('api/v1/user_info/', UserInfoView.as_view()),
 ]
