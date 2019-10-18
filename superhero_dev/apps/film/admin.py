@@ -24,9 +24,9 @@ class PosterInline(admin.TabularInline):
 
 @admin.register(Film)
 class FilmAdmin(admin.ModelAdmin):
-    list_display = ('name', 'cover', 'trailer', 'score', 'prised_count', 'is_hot',
+    list_display = ('name', 'cover', 'is_swiper', 'swiper_img', 'trailer', 'score', 'prised_count', 'is_hot',
                     'basic_info', 'original_name', 'release_date', 'release_place',
-                    'total_time', 'plot_desc', 'directors', 'created_time')
+                    'total_time', 'short_plot_desc', 'directors', 'created_time')
     # fields = ('name', 'cover', 'trailer', 'score', 'prised_count', 'is_hot',
     #                 'basic_info', 'original_name', 'release_date', 'release_place',
     #                 'total_time', 'plot_desc', 'directors')
@@ -37,6 +37,12 @@ class FilmAdmin(admin.ModelAdmin):
                 'name', 'cover', 'trailer', 'score', 'prised_count', 'is_hot',
                 'basic_info', 'original_name', 'release_date', 'release_place',
                 'total_time', 'plot_desc', 'directors'
+            )
+        }),
+        ('轮播信息', {
+            'description': '轮播图',
+            'fields': (
+                'is_swiper', 'swiper_img'
             )
         }),
     )

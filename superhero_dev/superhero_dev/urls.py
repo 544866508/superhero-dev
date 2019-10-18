@@ -1,3 +1,4 @@
+# coding=utf-8
 """superhero_dev URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -20,9 +21,8 @@ from django.views.static import serve
 from rest_framework.documentation import include_docs_urls
 import jwt
 
-from apps.swiper.views import GetSwiperView
-from apps.film.views import GetFilmView, GetGuessFilmView, GetSearchFilmView, GetFilmDetailView
-from apps.user.views import RegisterView, LoginView, LoginOutView, GetUserInfoView, UserInfoView
+from apps.film.views import GetAllFilmView, GetNewFilmView, GetHotFilmView, GetGuessFilmView, GetSearchFilmView, GetFilmDetailView, GetSwiperFilmView
+from apps.user.views import RegisterView, LoginView, LoginOutView, GetUserInfoView, UserInfoView, CheckJWTView, InterestMovie, GetMyInterestFilmView, GetHIstoryFilmView
 from superhero_dev.settings import MEDIA_ROOT
 
 urlpatterns = [
@@ -33,10 +33,16 @@ urlpatterns = [
     re_path(r'media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
 
     # 获取轮播图
-    path('api/v1/get/swiper/', GetSwiperView.as_view()),
+    path('api/v1/get/swiper/', GetSwiperFilmView.as_view()),
 
     # 获取所有影片（分页）
-    path('api/v1/get/film/', GetFilmView.as_view()),
+    path('api/v1/get/all_film/', GetAllFilmView.as_view()),
+
+    # 获取最新影片（分页）
+    path('api/v1/get/new_film/', GetNewFilmView.as_view()),
+
+    # 获取最热影片（分页）
+    path('api/v1/get/hot_film/', GetHotFilmView.as_view()),
 
     # 随机获取返回前5个影片
     path('api/v1/get/guessfilm/', GetGuessFilmView.as_view()),
@@ -61,4 +67,16 @@ urlpatterns = [
 
     # 局部更新信息（验证JWT）
     path('api/v1/user_info/', UserInfoView.as_view()),
+
+    # 检查jwt是否过期（验证JWT）
+    path('check_jwt/', CheckJWTView.as_view()),
+
+    # 用户收藏电影（验证JWT）
+    path('api/v1/interest_movie/', InterestMovie.as_view()),
+
+    # 获取用户收藏的电影列表
+    path('api/v1/my_interest_movie/', GetMyInterestFilmView.as_view()),
+
+    # 获取浏览历史记录的电影
+    path('api/v1/history_movie/', GetHIstoryFilmView.as_view()),
 ]

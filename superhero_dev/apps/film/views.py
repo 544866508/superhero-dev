@@ -1,3 +1,6 @@
+import random
+
+from django.forms import model_to_dict
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models import Q
@@ -7,22 +10,55 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from .models import Film
-from .serializer import FilmSerializer
+from .serializer import FilmSerializer, SwiperSerializer, FilmDetailSerializer
 
 
 # Create your views here.
-class GetFilmView(APIView):
+class GetAllFilmView(APIView):
     """
-    获取所有电影
+    获取热门电影
+    查询方式：随机排序
     """
     renderer_classes = [JSONRenderer]
 
     def get(self, request):
-        film_list = Film.objects.all()
+        film_list = Film.objects.all().order_by('?')
         if film_list:
             film_list = FilmSerializer(film_list, many=True)
             return Response(film_list.data)
-        context = {'status': '1', 'msg': 'FAIL'}
+        context = {'status': '400', 'msg': '页面加载失败'}
+        return JsonResponse(context)
+
+
+class GetHotFilmView(APIView):
+    """
+    获取热门电影
+    查询方式：获取收藏数最多的前10部电影，然后随机排序(todo)
+    """
+    renderer_classes = [JSONRenderer]
+
+    def get(self, request):
+        film_list = Film.objects.all().order_by('-prised_count')
+        if film_list:
+            film_list = FilmSerializer(film_list, many=True)
+            return Response(film_list.data)
+        context = {'status': '400', 'msg': '页面加载失败'}
+        return JsonResponse(context)
+
+
+class GetNewFilmView(APIView):
+    """
+    获取最新电影
+    查询方式：获取上映时间最近的前10部电影，然后随机排序(todo)
+    """
+    renderer_classes = [JSONRenderer]
+
+    def get(self, request):
+        film_list = Film.objects.all().order_by('-release_date')
+        if film_list:
+            film_list = FilmSerializer(film_list, many=True)
+            return Response(film_list.data)
+        context = {'status': '400', 'msg': '页面加载失败'}
         return JsonResponse(context)
 
 
@@ -37,7 +73,7 @@ class GetGuessFilmView(APIView):
         if film_list:
             film_list = FilmSerializer(film_list, many=True)
             return Response(film_list.data)
-        context = {'status': '1', 'msg': 'FAIL'}
+        context = {'status': '400', 'msg': '电影获取失败'}
         return JsonResponse(context)
 
 
@@ -56,7 +92,7 @@ class GetSearchFilmView(APIView):
         if film_list:
             film_list = FilmSerializer(film_list, many=True)
             return Response(film_list.data)
-        context = {'status': '1', 'msg': 'FAIL'}
+        context = {'status': '400', 'msg': '查询失败'}
         return JsonResponse(context)
 
 
@@ -71,7 +107,26 @@ class GetFilmDetailView(APIView):
         if movie_id:
             film = Film.objects.filter(id=movie_id)
             film = film[0]
-            film = FilmSerializer(film)
+            film = FilmDetailSerializer(film)
             return Response(film.data)
-        context = {'status': '1', 'msg': 'FAIL'}
+        context = {'status': '400', 'msg': '电影获取失败'}
         return JsonResponse(context)
+
+
+class GetSwiperFilmView(APIView):
+    """
+    获取轮播的电影
+    """
+    renderer_classes = [JSONRenderer]
+
+    def get(self, request):
+        swiper_films = Film.objects.filter(is_swiper=True).order_by('-created_time')
+        if swiper_films:
+            print(swiper_films)
+            serializer = SwiperSerializer(swiper_films, many=True)
+            print(serializer.data)
+            return Response(serializer.data)
+        context = {'status': '400', 'msg': '无轮播图'}
+        return JsonResponse(context)
+
+

@@ -1,7 +1,10 @@
+# coding=utf-8
 from django.db import models
 
 import uuid
 import datetime
+
+from apps.film.models import Film
 
 
 def custom_path(instance, filename):
@@ -40,6 +43,8 @@ class User(models.Model):
     random = models.UUIDField(default=uuid.uuid4, null=False, verbose_name="随机码")
     created_time = models.DateTimeField(auto_now_add=True, verbose_name="注册时间")
     other_info = models.OneToOneField(OtherInfo, null=True, blank=True, on_delete=models.CASCADE, verbose_name="其他用户信息")
+    # interest_film字段查询方式： user.interest_film.all()
+    interest_film = models.ManyToManyField(Film, null=True, blank=True, through='UserFilm', verbose_name="关注的电影")
 
     class Meta:
         verbose_name = "基本用户信息"
@@ -49,3 +54,17 @@ class User(models.Model):
         return self.username
 
 
+class UserFilm(models.Model):
+    """
+    用户关注的电影
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    film = models.ForeignKey(Film, on_delete=models.CASCADE)
+    created_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+
+    class Meta:
+        verbose_name = "用户关注的电影"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.film.name

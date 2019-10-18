@@ -33,11 +33,13 @@ class Film(models.Model):
     """
     name = models.CharField(max_length=30, verbose_name="电影名称")
     cover = models.ImageField(upload_to=custom_path, verbose_name="封面")
+    is_swiper = models.BooleanField(default=False, verbose_name="是否轮播")
+    swiper_img = models.ImageField(upload_to=custom_path, null=True, blank=True, verbose_name="轮播图片")
     trailer = models.FileField(upload_to=custom_path, null=True, blank=True, verbose_name="视频内容")
     score = models.DecimalField(max_digits=3, decimal_places=1, verbose_name="分数")
     prised_count = models.IntegerField(verbose_name="点赞数")
     basic_info = models.CharField(max_length=100, verbose_name="基本信息")
-    original_name = models.CharField(max_length=30, verbose_name="原名")
+    original_name = models.CharField(max_length=30, verbose_name="影片原名")
     release_date = models.DateTimeField(default=timezone.now, verbose_name="上映时间")
     release_place = models.CharField(max_length=10, verbose_name="上映地点")
     total_time = models.IntegerField(verbose_name="影片时长")
@@ -53,6 +55,13 @@ class Film(models.Model):
 
     def __str__(self):
         return self.name
+
+    def short_plot_desc(self):
+        if len(str(self.plot_desc)) > 50:
+            return '{}...'.format(str(self.plot_desc)[0:50])
+        else:
+            return str(self.plot_desc)
+    short_plot_desc.allow_tags = True
 
 
 class FilmActor(models.Model):

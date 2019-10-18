@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'crispy_forms',
 
-    'apps.swiper',
     'apps.film',
     'apps.user',
 
