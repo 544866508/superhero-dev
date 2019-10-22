@@ -56,10 +56,9 @@ class LoginView(APIView):
     def post(self, request):
         username = request.POST.get('username', None)
         if username:
-            user = User.objects.filter(username=username)
-            user = user[0]
+            user = User.objects.filter(username=username).first()
             if not user:
-                context = {'status': '400', 'msg': '用户名不存在'}
+                context = {'status': '403', 'msg': '用户名不存在'}
                 return JsonResponse(context)
             else:
                 password = request.POST.get('password', None)
@@ -75,7 +74,7 @@ class LoginView(APIView):
                 else:
                     context = {'status': '403', 'msg': '密码错误'}
                     return JsonResponse(context)
-        context = {'status': '404', 'msg': '页面不存在'}
+        context = {'status': '403', 'msg': '页面不存在'}
         return JsonResponse(context)
 
 
@@ -88,7 +87,7 @@ class LoginOutView(APIView):
     """
     @checkUserJWT
     def delete(self, request):
-        user_id = request.data.get('user_id', 0)
+        user_id = request.GET.get('user_id', 0)
         user = User.objects.filter(id=user_id).first()
         if user:
             # 删除JWT
@@ -231,8 +230,8 @@ class InterestMovie(APIView):
     # 取消收藏
     @checkUserJWT
     def delete(self, request):
-        user_id = request.data.get('user_id', 0)
-        movie_id = request.data.get('movie_id', 0)
+        user_id = request.GET.get('user_id', 0)
+        movie_id = request.GET.get('movie_id', 0)
         if user_id and movie_id:
             # 查询当前用户准备取消收藏的影片
             user_film = UserFilm.objects.filter(Q(user_id=user_id) & Q(film_id=movie_id))

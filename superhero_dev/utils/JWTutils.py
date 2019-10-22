@@ -1,6 +1,6 @@
 # coding=utf-8
 import datetime
-from django.http import JsonResponse
+from django.http import JsonResponse, QueryDict
 
 from jsonpickle import json
 
@@ -65,10 +65,16 @@ def checkJWT(request):
     # 获取验证用户时所需要的信息（JWT和当前用户secret_key）
     encoded_jwt = request.META.get("HTTP_AUTH_TOKEN")
 
-    # 兼容两种id的获取方式，get请求，非get请求
-    user_id_a = request.data.get('user_id', 0)
-    user_id_b = request.GET.get('user_id', 0)
-    user_id = user_id_a if (user_id_a != 0) else user_id_b
+    # 兼容两种id的获取方式
+    user_id_post_put = request.data.get('user_id', 0)
+    user_id_get_delete = request.GET.get('user_id', 0)
+
+    user_id = user_id_post_put if (user_id_post_put != 0) else user_id_get_delete
+
+    # print(encoded_jwt)
+    # print(user_id_a)
+    # print(user_id_b)
+    # print(user_id)
 
     user = User.objects.filter(id=user_id)
     if user and encoded_jwt:
