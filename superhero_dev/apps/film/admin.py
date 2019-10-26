@@ -1,6 +1,12 @@
 from django.contrib import admin
 from .models import Film, Actor, Poster, FilmActor
 
+# 定制站点信息
+admin.site.site_title = '后台管理'
+admin.site.site_header = 'PlamCinema - 后台管理'
+admin.site.index_title = 'PlamCinema'
+admin.site.site_url = 'https://www.zoesama.club/h5/'
+
 
 @admin.register(Poster)
 class PosterAdmin(admin.ModelAdmin):
